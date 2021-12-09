@@ -3,6 +3,7 @@
 ### Submitted objects from a student :
 ```
 ─ sample_report
+   ├─ sample.txt
    ├─ sample_report.pdf
    ├─ sample1.c
    ├─ sample2.c

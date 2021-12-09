@@ -9,7 +9,7 @@ from pygments import highlight
 from pygments.lexers.python import Python3Lexer
 from pygments.formatters.html import HtmlFormatter
 
-# function to merge pdf files in a target directory.
+# Function to merge all pdf files in a target directory.
 def merge_pdf_in_dir(dir_path, dst_path):
     l = glob.glob(os.path.join(dir_path, '*.pdf'))
     l.sort()
@@ -23,8 +23,6 @@ def merge_pdf_in_dir(dir_path, dst_path):
     merger.close()
     return len(l)
 
-
-
 # Set target directory
 target_dir = os.path.abspath("./sample_report")
 output_dir = os.path.abspath("./")
@@ -33,11 +31,11 @@ output_dir = os.path.abspath("./")
 output_html = ""
 processed_file_num = 0
 
-# Select .c source files
-target_files = glob.glob(target_dir+"/*.c")
+# Select .c source and text files
+target_files = glob.glob(target_dir+"/*.c") + glob.glob(target_dir+"/*.txt")
 processed_file_num += len(target_files)
 for source_fn in target_files:
-    f = open(source_fn, 'r')
+    f = open(source_fn, 'r', encoding="UTF-8")
     code = f.read()
     f.close()
 
@@ -47,7 +45,6 @@ for source_fn in target_files:
                 + "<h2>"+ source_fn +"</h2>" \
                 + highlight(code, Python3Lexer(), HtmlFormatter())\
                 + "</body></html>"
-
 
 # Select image files
 target_files = glob.glob(target_dir+"/*.jpg") + glob.glob(target_dir+"/*.jpeg") \
@@ -75,7 +72,6 @@ options = {
 }
 print("Making pdf...")
 pdfkit.from_string(output_html, os.path.join(target_dir,"auto_gen_output.pdf"), options=options)
-
 
 # Merge all pdf files in the target dir
 processed_file_num += merge_pdf_in_dir(target_dir, os.path.join(output_dir, "auto_united_report.pdf"))
