@@ -28,15 +28,6 @@
 [auto_united_report.pdf](./auto_united_report.pdf)
 
 ## Execute student's C program.
-### Run `execfile.py filequery` to execute specific program.
+### Run `execfile.py file_query root_directory` to execute specific program.
 
 ![](./images/execfile_example_image.png)
-
-
-## Check timestamp of submission.
-
-
-
-
-
-

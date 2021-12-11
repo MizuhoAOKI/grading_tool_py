@@ -7,7 +7,6 @@ import inquirer   # To use rich CLI
 import readchar
 
 # [TODO] This can be set by Excell worksheet.
-ROOT_DIR = "." # Set target root directory of students' assignments.
 DEFAULT_EXTENTION = ".c"
 
 # Select file.extention from __candidate / CLI, default extention = ".csv"
@@ -26,19 +25,17 @@ def get_path(target_dir, extention=DEFAULT_EXTENTION, objection=""):
         )
     ]
     answer = inquirer.prompt(cli_selection)
-
     print(f"Selected path : {answer['selected_path']}")
-
     return answer['selected_path']
 
 
 # Set query to identify which directory you choose.
-def main(query):
+def execfile(query, root_dir="."):
     # Show query
     print(f"Searching dir using query : {query}\n")
 
     # Get the list of students' directories.
-    root_path = os.path.abspath(ROOT_DIR)
+    root_path = os.path.abspath(root_dir)
     filesndirs = os.listdir(root_path)
     dirs = [f for f in filesndirs if os.path.isdir(os.path.join(root_path,f))]
     target_dir_candidates = [l for l in dirs if query in l]
@@ -53,7 +50,7 @@ def main(query):
         print("Try another query.")
         return False
 
-    # found single target_dir of the specific student you selected.
+    # Found single target_dir of the specific student you selected.
     target_dir = os.path.abspath(target_dir_candidates[0])
     target_fn  = os.path.splitext(os.path.basename(get_path(target_dir)))[0] # get filename without extention.
     target_file = os.path.join(target_dir, target_fn)
@@ -71,7 +68,9 @@ def main(query):
 
 if __name__ == '__main__':
     args = sys.argv
-    if 2 <= len(args):
-        main(args[1])
+    if len(args) == 2:
+        execfile(args[1])
+    elif 3 <= len(args):
+        execfile(args[1], args[2])
     else:
         print('Arguments are too short')
