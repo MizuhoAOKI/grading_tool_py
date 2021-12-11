@@ -1,5 +1,12 @@
 # Grading Tool for Computer Software Class
 
+## Environments
+- Developed for Windows OS.
+- Python 3.8 or higher
+- `pip install -r requirements.txt`
+- Working `gcc` command on your command line.
+
+## Merge submitted files
 ### Submitted objects from a student :
 ```
 ─ sample_report
@@ -15,5 +22,21 @@
    └─ result2.png
 ```
 
+### Run `python mergeallaspdf.py` to unite all submitted files as a pdf.
+
 ### See automatically united report : 
 [auto_united_report.pdf](./auto_united_report.pdf)
+
+## Execute student's C program.
+### Run `execfile.py filequery` to execute specific program.
+
+![](./images/execfile_example_image.png)
+
+
+## Check timestamp of submission.
+
+
+
+
+
+

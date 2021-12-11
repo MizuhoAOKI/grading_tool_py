@@ -83,4 +83,3 @@ if total_file_num != processed_file_num :
     print(f"##### Error! Unsupported file format has found! Check inside {target_dir} #####")
     sys.exit()
 print(f"All files in {target_dir} processed successfully.")
-
