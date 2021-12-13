@@ -64,12 +64,12 @@ def execfile(query, root_dir=".", subdir="提出物の添付ファイル"):
     target_dir = os.path.abspath(os.path.join(os.path.join(root_dir,target_dir_candidates[0]), subdir))
     target_fn  = os.path.splitext(os.path.basename(get_path(target_dir)))[0] # get filename without extention.
     target_file = os.path.join(target_dir, target_fn)
-    print(target_dir)
-    print(target_file)
+    print(f"target_dir  is {target_dir}")
+    print(f"target_file is {target_file}")
 
     print("\n##### Build the Program #####")
-    print(f"gcc {target_file}.c -o {target_file}")
-    proc_build=subprocess.run(f"gcc {target_file}.c -o {target_file}", shell=True, stdout=PIPE, stderr=PIPE, text=True)
+    print(f"gcc {os.path.basename(target_file)}.c -o {os.path.basename(target_file)}")
+    proc_build=subprocess.run(f"gcc {os.path.basename(target_file)}.c -o {os.path.basename(target_file)}", shell=True, stdout=PIPE, stderr=PIPE, text=True, cwd=target_dir)
     print(proc_build.stdout)
     # print("\n##### Execution Result #####\n")
     # print(f"{target_file}")

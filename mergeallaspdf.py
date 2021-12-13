@@ -5,7 +5,10 @@ import pdfkit
 import PyPDF2
 import mammoth
 import base64
+from PIL import Image
 from pdfkit import source
+import subprocess
+from subprocess import PIPE
 from pygments import highlight
 from pygments.lexers.python import Python3Lexer
 from pygments.formatters.html import HtmlFormatter
@@ -47,7 +50,7 @@ def mergepdf(target_dir):
     processed_file_num = 0
 
     # Select source and text files
-    target_files = glob.glob(target_dir+"/*.c") + glob.glob(target_dir+"/*.txt")
+    target_files = glob.glob(target_dir+"/*.c") + glob.glob(target_dir+"/*.txt") + glob.glob(target_dir+"/*.md")
 
     # Add non-extention file
     target_files += [nonext for nonext in glob.glob(target_dir+"/*") if os.path.splitext(nonext)[-1] == '' ]
@@ -91,9 +94,27 @@ def mergepdf(target_dir):
                     + highlight(code, Python3Lexer(), HtmlFormatter())\
                     + "</body></html>"
 
+
+    # TODO : deal with vector graphics
+    # Select EPS or SVG files
+    # vector_images = glob.glob(target_dir+"/*.eps") + glob.glob(target_dir+"/*.svg")
+
+    # for vecimg in vector_images : 
+    #     print(vecimg)
+    #     print(f"magick convert {os.path.basename(vecimg)} {os.path.splitext(os.path.basename(vecimg))[0]}.png")
+    #     popen = subprocess.Popen(f"magick convert {os.path.basename(vecimg)} {os.path.splitext(os.path.basename(vecimg))[0]}.png", shell=True, stdout=PIPE, stderr=PIPE, text=True, cwd=target_dir)
+    #     popen.wait() # wait during conversion
+        
+    # print(target_dir + "/" + os.path.splitext(os.path.basename(vecimg))[0]+".png")
+    # im = Image.open(vecimg)
+    # im = im.thumbnail((2000,2000), Image.ANTIALIAS)
+    # fig = im.convert("RGBA")
+    # fig.save(target_dir + "/" + os.path.splitext(os.path.basename(vecimg))[0]+".png", lossless=True)
+
+
     # Select image files
     target_files = glob.glob(target_dir+"/*.jpg") + glob.glob(target_dir+"/*.jpeg") \
-                + glob.glob(target_dir+"/*.gif") + glob.glob(target_dir+"/*.png") + glob.glob(target_dir+"/*.bmp")
+                + glob.glob(target_dir+"/*.gif") + glob.glob(target_dir+"/*.png") + glob.glob(target_dir+"/*.bmp") + glob.glob(target_dir+"/*.eps")
     processed_file_num += len(target_files)
 
     for image_fn in target_files:
