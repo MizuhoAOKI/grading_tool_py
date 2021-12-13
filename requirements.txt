@@ -1,3 +1,4 @@
 pdfkit
 PyPDF2
 pygments
+mammoth

@@ -3,6 +3,7 @@ import sys
 import glob
 import pdfkit
 import PyPDF2
+import mammoth
 import base64
 from pdfkit import source
 from pygments import highlight
@@ -11,6 +12,8 @@ from pygments.formatters.html import HtmlFormatter
 
 # Function to merge all pdf files in a target directory.
 def merge_pdf_in_dir(dir_path, dst_path):
+
+    # list up all pdf files
     l = glob.glob(os.path.join(dir_path, '*.pdf'))
     l.sort()
 
@@ -23,27 +26,68 @@ def merge_pdf_in_dir(dir_path, dst_path):
     merger.close()
     return len(l)
 
+# remove file if 
+def removefiles(abs_paths):
+    for abs_path in abs_paths:
+        if os.path.isfile(abs_path):
+            os.remove(abs_path)
+
+# merge pdf
 def mergepdf(target_dir):
     # Set target directory
-    # target_dir = os.path.abspath("./sample_report")
-    # output_dir = os.path.abspath("./")
+    print(f"Start processing {target_dir}")
+
+    # remove trashes
+    removefiles(glob.glob(os.path.join(target_dir, '*.exe')))
+    removefiles(glob.glob(os.path.join(target_dir, '*.out')))
+    removefiles(glob.glob(os.path.join(target_dir, 'auto_united_report.pdf')))
 
     # Initialize html source
     output_html = ""
     processed_file_num = 0
 
-    # Select .c source and text files
+    # Select source and text files
     target_files = glob.glob(target_dir+"/*.c") + glob.glob(target_dir+"/*.txt")
+
+    # Add non-extention file
+    target_files += [nonext for nonext in glob.glob(target_dir+"/*") if os.path.splitext(nonext)[-1] == '' ]
+
     processed_file_num += len(target_files)
     for source_fn in target_files:
-        f = open(source_fn, 'r', encoding="UTF-8")
-        code = f.read()
-        f.close()
+        try:
+            f = open(source_fn, 'r', encoding="UTF-8")
+            code = f.read()
+            f.close()
+        except:
+            f = open(source_fn, 'r', encoding="shift_jis")
+            code = f.read()
+            f.close()
 
         output_html += "<!DOCTYPE html><head><style type='text/css'>" \
                     + HtmlFormatter(linenos=True, cssclass="source").get_style_defs('.highlight')\
                     + "</style></head></body>" \
                     + "<h2>"+ source_fn +"</h2>" \
+                    + highlight(code, Python3Lexer(), HtmlFormatter())\
+                    + "</body></html>"
+
+    # Select source and text files
+    target_files = glob.glob(target_dir+"/*.f*") + glob.glob(target_dir+"/*.cc") + glob.glob(target_dir+"/*.cpp")
+    processed_file_num += len(target_files)
+    for source_fn in target_files:
+        try:
+            f = open(source_fn, 'r', encoding="UTF-8")
+            code = f.read()
+            f.close()
+        except:
+            f = open(source_fn, 'r', encoding="shift_jis")
+            code = f.read()
+            f.close()
+
+        output_html += "<!DOCTYPE html><head><style type='text/css'>" \
+                    + HtmlFormatter(linenos=True, cssclass="source").get_style_defs('.highlight')\
+                    + "</style></head></body>" \
+                    + "<h1 style='color:red;'> ### EXTENTION WARNING ### </h1>" \
+                    + "<h2>" + source_fn + "</h2>"\
                     + highlight(code, Python3Lexer(), HtmlFormatter())\
                     + "</body></html>"
 
@@ -59,6 +103,16 @@ def mergepdf(target_dir):
                     + "<h2>"+ image_fn +"</h2>" \
                     + "<img src='"+ data_uri +"' width='100%'>"\
                     + "</body></html>"
+
+    # Select word files
+    target_files = glob.glob(target_dir+"/*.docx") + glob.glob(target_dir+"/*.doc")
+    processed_file_num += len(target_files)
+    for word_fn in target_files:
+        with open(word_fn, 'rb') as document:
+            word_doc = mammoth.convert_to_html(document)
+            output_html += "<h2>"+ word_fn +"</h2>" + word_doc.value
+            messages = word_doc.messages
+            if messages : print(f"Word to html converter : {messages}")
 
     # Output a pdf file.
     options = {
